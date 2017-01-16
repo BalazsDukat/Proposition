@@ -1,0 +1,4 @@
+id int
+name string
+quantity int
+category string

@@ -1,0 +1,3 @@
+IF category = A THEN result1 = [ quantity + 10 ] ELSE result1 = [ quantity + 1 ]
+IF ( quantity < 5 ) OR ( id = 1 ) THEN result2 = order ELSE result2 = don't_order
+IF ( id > 20 ) AND ( quantity < 10 ) THEN orderqty = [ 30 - quantity ] ELSE orderqty = [ 20 - quantity ]
