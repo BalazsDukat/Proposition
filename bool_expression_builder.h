@@ -1,7 +1,4 @@
 #include <sstream>
-//#include <stdlib.h>
-//#include "tree_builder.h"
-//#include "searcher.h"
 
 boolExpression* boolExp_builder(istringstream& in, Operand* ROOT)
   {
@@ -19,27 +16,25 @@ boolExpression* boolExp_builder(istringstream& in, Operand* ROOT)
       else
         {cerr << "Expression did not close properly, found: " << temp <<
              " instead of ')'!" << endl;
-        //this is really just formality here.
-        return NULL; //just return NULL and that will be noticed elsewhere.
+        return NULL;
         }
       }
     else if(temp == "[")
       {cout << " new intExpression is being built on the left side " << endl;
       l_exp = intExp_builder(in, ROOT);
-      if(l_exp == NULL) return NULL; //just return NULL and that will be noticed elsewhere.
+      if(l_exp == NULL) return NULL;
       else if(in >> temp && temp == "]")
 			cout << " intExpression closed (left) " << endl;
       else
         {cerr << "Expression did not close properly, found: " << temp <<
              " instead of ']'!" << endl;
-        //this is really just formality here.
-        return NULL; //just return NULL and that will be noticed elsewhere.
+        return NULL;
         }
       }
     else if(temp == "{")
       {cout << " new stringExpression is being built on the left side " << endl;
       l_exp = stringExp_builder(in, ROOT);
-      if(l_exp == NULL) return NULL; //just return NULL and that will be noticed elsewhere.
+      if(l_exp == NULL) return NULL;
       else if(in >> temp && temp == "}")
 			cout << " stringExpression closed (left) " << endl;
       else

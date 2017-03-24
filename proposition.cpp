@@ -4,7 +4,14 @@
 #include <fstream>
 #include <stdlib.h>
 #include <conio.h>
-
+/*
+#include <mysql_connection.h>
+#include <driver.h>
+#include <exception.h>
+#include <resultset.h>
+#include <statement.h>
+#include <resultset_metadata.h>
+*/
 using namespace std;
 
 #include "class_Operand.h"
@@ -29,90 +36,29 @@ using namespace std;
 #include "string_expression_builder.h"
 #include "bool_expression_builder.h"
 #include "assigner_builder.h"
+#include "Operands_from_file.h"
+#include "rule_builder.h"
 
 int main()
 {// 1) ////////////////// READ FROM DESCRIPTOR AND BUILD OPERANDS AND SEARCH TREE
-  int in_col_count = 0, out_col_count = 0;
-  vector<string> in_col_labels, out_col_labels;
-  string line, temp, name, type;
-  ifstream input_descriptor_file("input_descriptor.csv"); //user editable
+/*Root of the binary search tree of Operands and handle for creating new Operands.*/
   Operand* ROOT = NULL, *newOperand;
-  while(getline(input_descriptor_file,line))
-  {istringstream input_descriptor(line);
-  newOperand = NULL;
-  if(input_descriptor >> name && input_descriptor >> type) //just the 1st 2 words one each
-  {if(type == "int") newOperand = new Operand_i(name);
-  else if(type == "string") newOperand = new Operand_s(name);
-  else cerr << "### Invalid column type: " << type << endl;
-  cout << name << " " << type << endl;
-  } else cerr << "COULDN'T READ tha name and type pair from input-descriptor!!" << endl;
-  if(newOperand != NULL) 
-	  if(tree_builder(ROOT,newOperand)) 
-	  {in_col_count++; cout << in_col_count;
-	  in_col_labels.push_back(name);
-	  }
-	  else cout << "### Nothing to be placed onto the search tree." << endl;
-  else cerr << "### Incomplete input_descriptor.csv, got a line but not a string from it.";
-  }
-	input_descriptor_file.close();
-	//now for the output
-  ifstream output_descriptor_file("output_descriptor.csv"); //user editable
-	while(getline(output_descriptor_file,line))
-  {istringstream output_descriptor(line);
-  newOperand = NULL;
-  if(output_descriptor >> name && output_descriptor >> type) //just the 1st 2 words one each
-  {if(type == "int") newOperand = new Operand_i(name);
-  else if(type == "string") newOperand = new Operand_s(name);
-  else cerr << "### Invalid column type: " << type << endl;
-  cout << name << " " << type << endl;
-  }
-	else cerr << "COULDN'T READ tha name and type pair from output-descriptor!!"
-	<< endl;
-  if(newOperand != NULL)
-	  if(tree_builder(ROOT,newOperand))
-	  {out_col_count++;
-	  out_col_labels.push_back(name);
-	  }
-	  else cout << "### Nothing to be placed onto the search tree." << endl;
-  else cerr << "### Incomplete descriptor.csv, got a line but not a string from it.";
-  }
-  output_descriptor_file.close();
-// ASSIGNERS SHOULD ONLY ASSIGN VALUES TO RESULT OPERANDS!
+/*Two vectors that will serve as lists of Operand names. They are column labels in tables.*/
+  vector<string> in_col_labels, out_col_labels;
+/*Generally useful variables, a string for each line and a general variable.*/
+  string line, temp;
+/*Get the two set of Operands. They are on different lists but go into the same data structure.*/
+  Operands_from_file("input_descriptor", ROOT, in_col_labels);
+	Operands_from_file("output_descriptor", ROOT, out_col_labels);
+	
 // 2) /////////////////////////// BUILDING RULES
-//the building of rulebase from file happens only once, so it is just part of main now.
-vector<Rule> RB; //this will store the rules in memory
-ifstream rules_file("rules.txt"); //user editable
-int counter = 0;
-while(getline(rules_file,line))
-{istringstream rule(line);
-cout << counter; counter++;
-if((rule >> temp) && (temp == "IF"))
-	{Rule* Rp = NULL;
-	if(Rp = new Rule(boolExp_builder(rule, ROOT)))//if this goes well, we continue. Might need to be changed.
-		{cout << endl << "% we probably have an IF-side here ^_^ %" << endl;
-		if((rule >> temp) && (temp == "THEN") && (Rp != NULL))
-		{Rp -> add_THEN(Assigner_builder(rule, ROOT));//multiple THENs? while not ELSE go on... , as separator
-		cout << endl << "% we probably have a THEN-part here ^_^ %" << endl;
-		}
-		else cout << "### badly formed Rule, has no THEN part!" << endl
-     << "#### or the rule doesn't even exist." << endl
-		 << " or could not read from file." << endl;
-		if((rule >> temp) && (temp == "ELSE") && (Rp != NULL))
-    {Rp -> add_ELSE(Assigner_builder(rule, ROOT));//multiple ELSEs? as with THENs.
-    cout << endl << "% we probably have an ELSE-part here ^_^ %" << endl;
-    }
-		else cout << " no ELSE part, but that's OK" << endl;
-		RB.push_back(*Rp);
-		}
-	else cout << "### INVALID EXPRESSION, NO RULE MADE! " << endl;
-	}
-else cout << "### DOESN'T START WITH IF, this is not a rule!" << endl
-<< " or could not read from file." << endl;
-}
-rules_file.close();
+/*This happens only once but better to keep it separate.*/
+vector<Rule> RB = rule_builder("rules.txt", ROOT); //this will store the rules in memory
+
 // 3) INITIALISING OPERANDS, RUNNING RULES ON THEM, WRITING OUTPUT, until all rows have been processed
-  ifstream data_file("data.csv"); //user editable
+  ifstream data_file("data.csv");
   ofstream output_file("OutPut.csv");
+  
   while(getline(data_file,line)) //for each row. setting Operand values and then firing rules.
   {istringstream data(line);
   for(int i = 0; i < in_col_labels.size()-1; i++) //initialisation
@@ -176,5 +122,5 @@ rules_file.close();
   }
 output_file.close();
 cout << "Finished successfully! Press any key to exit." << endl;
-char c = getch();
+//char c = getch();
 }
