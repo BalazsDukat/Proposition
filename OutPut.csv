@@ -1,40 +1,40 @@
-13 order 8 
-35 don't_order -14 
-55 don't_order -34 
-5 order 16 
-36 don't_order -15 
-3 order 18 
-8 don't_order 13 
-9 don't_order 12 
-66 don't_order -45 
-10 don't_order 11 
-46 don't_order -25 
-91 don't_order -70 
-5 order 16 
-81 don't_order -60 
-4 order 17 
-57 don't_order -36 
-68 don't_order -47 
-99 don't_order -78 
-8 don't_order 13 
-25 don't_order -4 
-5 order 26 
-7 don't_order 24 
-4 order 27 
-7 don't_order 24 
-99 don't_order -78 
-13 don't_order 8 
-5 order 26 
-99 don't_order -78 
-4 order 27 
-8 don't_order 23 
-9 don't_order 22 
-10 don't_order 21 
-1 order 30 
-124 don't_order -103 
-13 don't_order 8 
-2 order 29 
-44 don't_order -23 
-8 don't_order 23 
-10 don't_order 21 
-9 don't_order 22 
+13,order,8
+35,don't_order,-14
+55,don't_order,-34
+5,order,16
+36,don't_order,-15
+3,order,18
+8,don't_order,13
+9,don't_order,12
+66,don't_order,-45
+10,don't_order,11
+46,don't_order,-25
+91,don't_order,-70
+5,order,16
+81,don't_order,-60
+4,order,17
+57,don't_order,-36
+68,don't_order,-47
+99,don't_order,-78
+8,don't_order,13
+25,don't_order,-4
+5,order,26
+7,don't_order,24
+4,order,27
+7,don't_order,24
+99,don't_order,-78
+13,don't_order,8
+5,order,26
+99,don't_order,-78
+4,order,27
+8,don't_order,23
+9,don't_order,22
+10,don't_order,21
+1,order,30
+124,don't_order,-103
+13,don't_order,8
+2,order,29
+44,don't_order,-23
+8,don't_order,23
+10,don't_order,21
+9,don't_order,22

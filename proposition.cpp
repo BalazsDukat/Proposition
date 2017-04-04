@@ -38,15 +38,17 @@ using namespace std;
 #include "assigner_builder.h"
 #include "Operands_from_file.h"
 #include "rule_builder.h"
+#include "initialisation.h"
+#include "write_out.h"
 
 int main()
 {// 1) ////////////////// READ FROM DESCRIPTOR AND BUILD OPERANDS AND SEARCH TREE
 /*Root of the binary search tree of Operands and handle for creating new Operands.*/
-  Operand* ROOT = NULL, *newOperand;
+  Operand* ROOT = NULL;
 /*Two vectors that will serve as lists of Operand names. They are column labels in tables.*/
   vector<string> in_col_labels, out_col_labels;
 /*Generally useful variables, a string for each line and a general variable.*/
-  string line, temp;
+  string line;
 /*Get the two set of Operands. They are on different lists but go into the same data structure.*/
   Operands_from_file("input_descriptor", ROOT, in_col_labels);
 	Operands_from_file("output_descriptor", ROOT, out_col_labels);
@@ -58,69 +60,27 @@ vector<Rule> RB = rule_builder("rules.txt", ROOT); //this will store the rules i
 // 3) INITIALISING OPERANDS, RUNNING RULES ON THEM, WRITING OUTPUT, until all rows have been processed
   ifstream data_file("data.csv");
   ofstream output_file("OutPut.csv");
-  
+					 /*for each data line/object:
+					   1 initialise. from file or from db
+							 when initialising from file: take line, then process it based on the inputfile descriptor
+						 2 run the rules
+						 3 write the output. into file r db
+						 then start again from 1 while there's input.
+					 */
   while(getline(data_file,line)) //for each row. setting Operand values and then firing rules.
-  {istringstream data(line);
-  for(int i = 0; i < in_col_labels.size()-1; i++) //initialisation
-  {Operand* Op = NULL;
-	if(data >> temp) Op = searcher(ROOT, in_col_labels[i]);
-  if(Op != NULL)
-  {switch(Op -> ret_type())
-	{case 'i':
-		{Operand_i* Op_i = static_cast<Operand_i* >(Op);
-		istringstream string_to_int(temp);
-    int i;
-    if(string_to_int >> i) Op_i -> set_value(i);
-    else cerr << "### Conversion from string to int failed." << endl;
-    break;
-  	}
-	case 's':
-		{Operand_s* Op_s = static_cast<Operand_s* >(Op);
-    Op_s -> set_value(temp);
-    break; //other Operand types can be added here.
-  	}
-	default: //This normally cannot possibly happen.
-		cout << "### unknown Operand type: " << Op -> ret_type() << endl;
-	}
-  }
-  else cout << "### could not find Operand ";
-  cout << in_col_labels[i] << endl; //just to show what's happening.
-  }
-  for(int i = 0; i < RB.size(); i++) RB[i].fire(); //firing all rules
+  {if(initialisation(line, ROOT, in_col_labels)) //initialise
+	 {for(int i = 0; i < RB.size(); i++) RB[i].fire(); //fire all rules
+	 write_out(line, ROOT, out_col_labels, output_file); //write out the results
+	 }
+	 else cerr << "There was a problem with the initialisation of Operands for this line: "
+	 << line << endl;//and then get next line and continue.
 // 4) OUTPUT //the results should be written out here.
   //prepared statment here, that writes out results into a database table or csv file.
   //for now the same data.csv will be used for output, adding columns to it.
   //a separate outputwriter function here should go through the result-table columnames
   //which could be given in a file. searcher can find each and output their values into the output file.
-  for(int i = 0; i < out_col_labels.size(); i++)
-	{temp = out_col_labels[i];
-	newOperand = searcher(ROOT,temp);
-      if(newOperand == NULL)
-        {cerr << "Operand " << temp << " cannot be found!" << endl;
-				//if it happens here, that is a problem!
-				output_file << temp << "*missing*";
-        }
-      else if(newOperand -> ret_type() == 'i')
-        {Operand_i* op_i = static_cast<Operand_i* >(newOperand);
-				output_file << op_i -> ret_value();
-        }
-      else if(newOperand -> ret_type() == 's')
-        {Operand_s* op_s = static_cast<Operand_s* >(newOperand);
-				output_file << op_s -> ret_value();
-        }
-      else if(newOperand -> ret_type() == 'b')
-        {Operand_b* op_b = static_cast<Operand_b* >(newOperand);
-				output_file << op_b -> ret_value();
-        }
-      else
-        {cerr<< " WRONG TYPE RETURNED: " << newOperand -> ret_type() << endl;
-        output_file << "wrong_type:" << newOperand -> ret_type() << "*for:" << temp;
-        }
-	output_file << " ";
-  }
-	output_file << endl;
-  }
+	}
 output_file.close();
 cout << "Finished successfully! Press any key to exit." << endl;
-//char c = getch();
+char c = getch();
 }
