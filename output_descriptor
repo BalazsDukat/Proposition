@@ -1,3 +1,3 @@
-result1 int
-result2 string
+result1 int This is some result. Its name is "result1" and its type is integer.
+result2 string This is some other result, its name is "result2" and its type is string.
 orderqty int

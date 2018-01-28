@@ -24,6 +24,27 @@ left -> set_value(right -> ret_value());
 else cerr << " ***Assigning didn't work!*** " << endl;
 }
 
+class Assigner_d : public Assigner
+{public:
+	Assigner_d(Operand_d*, doubleExpression*);
+	void assign();
+private:
+	Operand_d* left = NULL;
+        doubleExpression* right = NULL;
+};
+
+Assigner_d::Assigner_d(Operand_d* l, doubleExpression* r)
+{left = l;
+right = r;
+}
+
+void Assigner_d::assign()
+{cout << " Assigner_d working... " << endl;
+if(left != NULL && right != NULL)
+left -> set_value(right -> ret_value());
+else cerr << " ***Assigning didn't work!*** " << endl;
+}
+
 class Assigner_s : public Assigner
 {public:
 	Assigner_s(Operand_s*, stringExpression*);

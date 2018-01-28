@@ -5,25 +5,24 @@ bool Operands_from_file(string filename, Operand*& ROOT, vector<string>& col_lab
 
   ifstream descriptor_file(filename.c_str()); //user editable
   Operand* newOperand = NULL;
+
   while(getline(descriptor_file,line))
   {istringstream descriptor(line);
-	newOperand = NULL;
+  newOperand = NULL;
   if(descriptor >> name && descriptor >> type) //just the 1st 2 words one each
   {if(type == "int") newOperand = new Operand_i(name);
+  else if(type == "double") newOperand = new Operand_d(name);
   else if(type == "string") newOperand = new Operand_s(name);
+  else if(type == "bool") newOperand = new Operand_b(name);
   else cerr << "### Invalid column type: " << type << endl;
-  cout << name << " " << type << endl; //diagnostic message
+  cout << name << " " << type << endl; //diagnostic message will be disabled
   } else cerr << "COULDN'T READ the name and type pair from input-descriptor!!" << endl;
   if(newOperand != NULL)
 	  if(tree_builder(ROOT,newOperand))
 	  {col_labels.push_back(name);
 	  }
 	  else cout << "### Nothing to be placed onto the search tree." << endl;
-  else
-	{ cerr << "### Incomplete input_descriptor, got a line but not a string from it.";
-		descriptor_file.close();
-		return false;
-	}
+  else cerr << "### Incomplete input_descriptor, got a line but not a string from it.";
   }
   descriptor_file.close();
 	return true;

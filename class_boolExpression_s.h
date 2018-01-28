@@ -14,7 +14,7 @@ right = r;
 }
 
 bool boolExpression_s::ret_value()
-{if(Operator == "=")
+{if(Operator == "=") // this is to be extended with a few more
 	{if(left -> ret_value() == right -> ret_value()) return true;
 	else return false;
 	}

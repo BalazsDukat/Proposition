@@ -32,6 +32,23 @@ if(Op != NULL) return Op -> ret_value();
 return 0; //if something goes wrong.
 }
 
+class doubleWrapper : public doubleExpression
+{public:
+    doubleWrapper(Operand_d*);
+    double ret_value();
+private:
+	Operand_d* Op = NULL;
+};
+
+doubleWrapper::doubleWrapper(Operand_d* O)
+{Op = O;}
+
+double doubleWrapper::ret_value()
+{//cout << "\n returning Operand_value ";
+if(Op != NULL) return Op -> ret_value();
+return 0; //if something goes wrong.
+}
+
 class stringWrapper : public stringExpression
 {public:
     stringWrapper(Operand_s*);

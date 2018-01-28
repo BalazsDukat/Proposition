@@ -7,8 +7,8 @@ class Rule
 private:
 	boolExpression* IF;
 	Assigner* THEN, *ELSE;
-        //int RN = 0; //possibly these should have identifiers as currently only
-        //their position identifies them when Operands refer to them.
+    //int RN = 0; //possibly these should have identifiers as currently only
+    //their position identifies them when Operands refer to them.
 };
 
 Rule::Rule(boolExpression* c)
@@ -17,19 +17,21 @@ THEN = NULL;
 ELSE = NULL;
 }
 
-void Rule::add_THEN(Assigner* a) 
+void Rule::add_THEN(Assigner* a)
 {THEN = a;}
 
-void Rule::add_ELSE(Assigner* a) 
+void Rule::add_ELSE(Assigner* a)
 {ELSE = a;}
 
 void Rule::fire()
 {//cout << " firing Rule" << endl;
 if(IF != NULL)
       if(IF -> ret_value() == true)
-           if(THEN != NULL) THEN -> assign();
-           else cerr << " ***NO 'THEN' PART in Rule*** " << endl;
-      else if(ELSE != NULL) ELSE -> assign();
-           else cerr << " ***NO 'ELSE' PART in Rule*** " << endl;
+           {if(THEN != NULL) THEN -> assign();
+           //else cerr << " ***NO 'THEN' PART in Rule*** " << endl;
+           }
+      else {if(ELSE != NULL) ELSE -> assign();
+           //else cerr << " ***NO 'ELSE' PART in Rule*** " << endl;
+           }
 else cerr << " ***NO 'IF' PART!*** how can this Rule even exist???" << endl;
 }

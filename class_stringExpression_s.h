@@ -14,7 +14,8 @@ right = r;
 }
 
 string stringExpression_s::ret_value()
-{if(Operator == "+") return (left -> ret_value() + right -> ret_value());
+{if(Operator == "+") //this is to be extended with a few more
+return (left -> ret_value() + right -> ret_value());
 bad_Operator();
 return "bad operator"; //just in case
 }
